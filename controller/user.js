@@ -8,17 +8,18 @@ const Role = require('../models/Role');
 const successResponse = require('../common/responses').successResponse;
 const failureResponse = require('../common/responses').failureResponse;
 const errorResponse = require('../common/responses').errorResponse;
-var events = require('events');
-var eventEmitter = new events.EventEmitter();
+const events = require('../common/event.observer');
+// var events = require('events');
+// var eventEmitter = new events.EventEmitter();
 let router = express.Router();
 
-eventEmitter.on('login_success', () => {
-    console.log("Login successfully")
-});
+// eventEmitter.on('login_success', () => {
+//     console.log("Login successfully")
+// });
 
-eventEmitter.on('login_fail', () => {
-    console.log("Login failed")
-});
+// eventEmitter.on('login_fail', () => {
+//     console.log("Login failed")
+// });
 
 
 router.createUser = function(req, res) {
@@ -76,10 +77,10 @@ router.login = function(req, res) {
                 expiresIn: 86400 // expires in 24 hours
             });
             if(bcrypt.compareSync(req.body.password, userData.password)) {
-                eventEmitter.emit('login_success')
+                events.emit('login_success')
                 return successResponse(res, "Login successful", {user_id: userData._id, token: token})
             } else {
-                eventEmitter.emit('login_fail')
+                events.emit('login_fail')
                 return failureResponse(res, "Invalid credentials")
             }
         } else {
